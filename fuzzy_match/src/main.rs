@@ -1,16 +1,21 @@
 mod fuzzy_match{
-    use std::{collections::HashSet, fmt::format};
+    use std::{collections::HashSet};
+    use regex::Regex;
 
-    pub fn ratio(str1 : &str, str2 : &str, to_lower: Option<bool>) -> f32{
-        let convert_to_loer = to_lower.unwrap_or(true);
+    pub fn ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
+        if str1 == str2 {
+            return 1.0;
+        }
 
-        let str1_low = if convert_to_loer { str1.to_lowercase() } else { str1.to_owned() };
-        let str2_low = if convert_to_loer { str2.to_lowercase() } else { str2.to_owned() };
+        let clean_str = clean_str.unwrap_or(true);
 
-        return levenshtein(&str1_low, &str2_low, 2);
+        let str1_cleaned = if clean_str { clean_string(str1) } else { str1.to_owned() };
+        let str2_cleaned = if clean_str { clean_string(str2) } else { str2.to_owned() };
+
+        levenshtein(&str1_cleaned, &str2_cleaned, 2)
     }
 
-    pub fn partial_ratio(str1 : &str, str2 : &str, to_lower: Option<bool>) -> f32{
+    pub fn partial_ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
         if str1 == str2 {
             return 1.0;
         }
@@ -18,57 +23,58 @@ mod fuzzy_match{
         let str1_len = str1.len();
         let str2_len = str2.len();
 
-        let convert_to_loer = to_lower.unwrap_or(true);
+        let clean_str = clean_str.unwrap_or(true);
 
-        let str1_low = if convert_to_loer { str1.to_lowercase() } else { str1.to_owned() };
-        let str2_low = if convert_to_loer { str2.to_lowercase() } else { str2.to_owned() };
+        let str1_cleaned = if clean_str { clean_string(str1) } else { str1.to_owned() };
+        let str2_cleaned = if clean_str { clean_string(str2) } else { str2.to_owned() };
         
-        let tokens = if str1_len > str2_len { str1_low.split(' ') } else { str2_low.split(' ') };
+        let tokens = if str1_len > str2_len { str1_cleaned.split(' ') } else { str2_cleaned.split(' ') };
 
         let mut best_ratio : f32 = 0.0;
+        let shortest_str : &str = if str1_len < str2_len { &str1_cleaned } else { &str2_cleaned };
 
-        for token in tokens{
-             let current_ratio = if str1_len > str2_len { levenshtein(token, &str2_low, 2) } else { levenshtein(token, &str1_low, 2) };
-             best_ratio = best_ratio.max(current_ratio);
+        for token in tokens {
+             best_ratio = best_ratio.max(levenshtein(token, shortest_str, 2));
+             println!("{best_ratio}");
         }
 
-        return best_ratio;
+        best_ratio
     }
 
-    pub fn token_sort_ration(str1 : &str, str2 : &str, to_lower: Option<bool>) -> f32{
+    pub fn token_sort_ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
         if str1 == str2 {
             return 1.0;
         }
 
-        let convert_to_loer = to_lower.unwrap_or(true);
+        let clean_str = clean_str.unwrap_or(true);
 
-        let str1_low = if convert_to_loer { str1.to_lowercase() } else { str1.to_owned() };
-        let str2_low = if convert_to_loer { str2.to_lowercase() } else { str2.to_owned() };
+        let str1_cleaned = if clean_str { clean_string(str1) } else { str1.to_owned() };
+        let str2_cleaned = if clean_str { clean_string(str2) } else { str2.to_owned() };
 
-        let mut tokens_str1 : Vec<&str> = str1_low.split(' ').collect();
+        let mut tokens_str1 : Vec<&str> = str1_cleaned.split(' ').collect();
         tokens_str1.sort();
 
-        let mut tokens_str2 : Vec<&str> = str2_low.split(' ').collect();
+        let mut tokens_str2 : Vec<&str> = str2_cleaned.split(' ').collect();
         tokens_str2.sort();
 
         let str1_low_sorted = tokens_str1.join(" ");
         let str2_low_sorted = tokens_str2.join(" ");
 
-        return levenshtein(&str1_low_sorted, &str2_low_sorted, 0);
+        levenshtein(&str1_low_sorted, &str2_low_sorted, 0)
     }
 
-    pub fn token_set_ratio(str1 : &str, str2 : &str, to_lower: Option<bool>) -> f32{
+    pub fn token_set_ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
         if str1 == str2 {
             return 1.0;
         }
 
-        let convert_to_loer = to_lower.unwrap_or(true);
+        let clean_str = clean_str.unwrap_or(true);
 
-        let str1_low = if convert_to_loer { str1.to_lowercase() } else { str1.to_owned() };
-        let str2_low = if convert_to_loer { str2.to_lowercase() } else { str2.to_owned() };
+        let str1_cleaned = if clean_str { clean_string(str1) } else { str1.to_owned() };
+        let str2_cleaned = if clean_str { clean_string(str2) } else { str2.to_owned() };
 
-        let tokens_str1 : Vec<&str> = str1_low.split(' ').collect();
-        let tokens_str2 : Vec<&str> = str2_low.split(' ').collect();
+        let tokens_str1 : Vec<&str> = str1_cleaned.split(' ').collect();
+        let tokens_str2 : Vec<&str> = str2_cleaned.split(' ').collect();
         
         let unique_tokens_str1: HashSet<&str> = tokens_str1.into_iter().collect();
         let unique_tokens_str2: HashSet<&str> = tokens_str2.into_iter().collect();
@@ -102,7 +108,7 @@ mod fuzzy_match{
         max
     }
 
-    fn levenshtein(str1 : &str, str2 : &str, substitution_const: usize) -> f32{
+    fn levenshtein(str1 : &str, str2 : &str, substitution_const: usize) -> f32 {
         let rows = str1.len() + 1;
         let columns = str2.len() + 1;
         let mut distance: Vec<Vec<usize>> = vec![vec![0; columns]; rows];
@@ -124,17 +130,122 @@ mod fuzzy_match{
                                 .min(distance[i-1][j-1] + cost);
             }
         }
+        
+        for row in &distance {
+            println!("{:?}", row);
+        }
 
         let sum_length = (str1.len() + str2.len()) as f32;
-        return (sum_length - distance[rows-1][columns-1] as f32) / sum_length;
+
+        (sum_length - distance[rows-1][columns-1] as f32) / sum_length
 
     }
+
+    fn clean_string(str : &str) -> String {
+        let mut regex = Regex::new(r"[^a-zA-Z0-9\s]").unwrap();
+        let cleared_str = regex.replace_all(&str, "").to_string().to_lowercase();
+
+        regex = Regex::new(r"\s+").unwrap();
+        regex.replace_all(cleared_str.trim(), " ").to_string()
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        #[test]
+        fn clean_string_trims_string_and_deletes_non_alphanumerics() {
+            let str = "  duck && cats";
+            assert_eq!(clean_string(&str), "duck cats");
+        }
+
+        #[test]
+        fn clean_string_deletes_repeaded_spaces_and_non_alphanumerics() {
+            let str = "this1       is 4 u   :*   ";
+            assert_eq!(clean_string(&str), "this1 is 4 u");
+        }
+
+        #[test]
+        fn clean_string_turns_letters_into_lower_case() {
+            let str = "THERE IS NO LOWERCASE LETTER IN THIS SENTENCE HAHAHA";
+            assert_eq!(clean_string(&str), "there is no lowercase letter in this sentence hahaha");
+        }
+
+        #[test]
+        fn clean_string_turns_letters_into_lower_case_delets_non_alphanumerics_and_trims() {
+            let str = "  SUper Mega    H4Rd s**************tR1N$$$G";
+            assert_eq!(clean_string(&str), "super mega h4rd str1ng");
+        }
+
+        #[test]
+        fn levenshtein_no_spaces_sub_count_2() {
+            let str1 = "haouse";
+            let str2 = "home";
+            let sum_length = str1.len() + str2.len();
+            let result = (sum_length - 8) as f32 / sum_length as f32;
+
+            assert_eq!(levenshtein(&str1, &str2, 2), result);
+        }
+
+        #[test]
+        fn levenshtein_spaces_sub_count_1() {
+            let str1 = "this is a string";
+            let str2 = "that is a string";
+            let sum_length = str1.len() + str2.len();
+            let result = (sum_length - 2) as f32 / sum_length as f32;
+
+            assert_eq!(levenshtein(&str1, &str2, 1), result);
+        }
+
+        #[test]
+        fn ratio_words_with_spaces() {
+            let str1 = "This is a string";
+            let str2 = "That is a string";
+            let sum_length = str1.len() + str2.len();
+            let result = (sum_length - 4) as f32 / sum_length as f32;
+
+            assert_eq!(ratio(&str1, &str2, None), result);
+        }
+
+        #[test]
+        fn partial_ratio_words_with_spaces() {
+            let str1 = "My Friend Builds :* Robots";
+            let str2 = "Roboto";
+            let sum_length = "Robots".len() + str2.len();
+            let result = (sum_length - 2) as f32 / sum_length as f32;
+
+            assert_eq!(partial_ratio(&str1, &str2, None), result);
+        }
+
+        #[test]
+        fn token_sort_ratio_words_with_spaces() {
+            let str1 = "Nasa landed a man on the moon";
+            let str2 = "A man landed on the moon due to Nasa";
+            let sum_length = str1.len() + str2.len();
+            let result = (sum_length - 7) as f32 / sum_length as f32;
+
+            assert_eq!(token_sort_ratio(&str1, &str2, None), result);
+        }
+
+        #[test]
+        fn token_set_ratio_words_with_spaces() {
+            let str1 = "The library has my favorite book its called rain & world";
+            let str2 = "rain and world";
+            let sum_length = 24;
+            let result = (sum_length - 4) as f32 / sum_length as f32;
+
+            assert_eq!(token_set_ratio(&str1, &str2, None), result);
+        }
+    }
+
 }
 
 fn main() {
     //let a = fuzzy_match::ratio("This is a string", "That is a string", None);
     //let a = fuzzy_match::partial_ratio("Boston dynamic builds robots", "roboty", None);
     //let a = fuzzy_match::token_sort_ration("Nasa landed a man on the moon", "A man landed on the moon due to Nasa", None);
-    let a = fuzzy_match::token_set_ratio("Todays match is the first match between Lakers and Galaxis", "Lakers v Galaxis", None);
-    println!("{a}");
+    //let a = fuzzy_match::token_set_ratio("Todays match is the first match between Lakers and Galaxis", "Lakers v Galaxis", None);
+    //println!("{a}");
+
+    let a = fuzzy_match::ratio!();
 }
