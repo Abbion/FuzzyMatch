@@ -34,7 +34,6 @@ pub fn partial_ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
 
     for token in tokens {
         best_ratio = best_ratio.max(levenshtein(token, shortest_str, 2));
-        println!("{best_ratio}");
     }
 
     best_ratio
@@ -139,6 +138,34 @@ fn clean_string(str : &str) -> String {
 
     regex = Regex::new(r"\s+").unwrap();
     regex.replace_all(cleared_str.trim(), " ").to_string()
+}
+
+#[macro_export]
+macro_rules! fuzzy_ratio {
+    ($str1:expr, $str2:expr) => {
+        fuzzy_match::ratio($str1, $str2, None)
+    };
+}
+
+#[macro_export]
+macro_rules! fuzzy_partial_ratio {
+    ($str1:expr, $str2:expr) => {
+        fuzzy_match::partial_ratio($str1, $str2, None)
+    };
+}
+
+#[macro_export]
+macro_rules! fuzzy_token_sort_ratio {
+    ($str1:expr, $str2:expr) => {
+        fuzzy_match::token_sort_ratio($str1, $str2, None)
+    };
+}
+
+#[macro_export]
+macro_rules! fuzzy_token_set_ratio {
+    ($str1:expr, $str2:expr) => {
+        fuzzy_match::token_set_ratio($str1, $str2, None)
+    };
 }
 
  #[cfg(test)]
