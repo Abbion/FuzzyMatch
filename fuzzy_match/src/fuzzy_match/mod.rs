@@ -1,6 +1,27 @@
+//! # Fuzzy Match
+//!
+//! `Fuzzy Match` is a fuzzy matching library based on popular `FuzzyWuzzy` library for python.
+//! It contains 4 basic fuzzy matching functions.
+
 use std::{collections::HashSet};
 use regex::Regex;
 
+/// Uses the levenshtein distance to calculate the similarity of two strings.
+///
+/// # Example
+///
+/// ```
+/// let str1 = "Hello";
+/// let str2 = "Hallo";
+/// let similiarity = fuzzy_match::ratio(str1, str2, None);
+///
+/// assert_eq!(similiarity, 0.8);
+/// ```
+/// 
+/// # Third parameter
+/// 
+/// `clean_str: Option<bool>` - tells the function if the strings were cleaned. Set to `false` if they ware and to `true` or `None` if they need to be cleaned.
+/// 
 pub fn ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
     if str1 == str2 {
         return 1.0;
@@ -14,6 +35,22 @@ pub fn ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
     levenshtein(&str1_cleaned, &str2_cleaned, 2)
 }
 
+/// Splits the longest string into tokens and uses the levenshtein distance to calculate the similarity of tokens and shorter string.
+///
+/// # Example
+///
+/// ```
+/// let str1 = "Do we buy the airplane?";
+/// let str2 = "Airplane";
+/// let similiarity = fuzzy_match::partial_ratio(str1, str2, None);
+///
+/// assert_eq!(similiarity, 1.0);
+/// ```
+/// 
+/// # Third parameter
+/// 
+/// `clean_str: Option<bool>` - tells the function if the strings were cleaned. Set to `false` if they ware and to `true` or `None` if they need to be cleaned.
+/// 
 pub fn partial_ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
     if str1 == str2 {
         return 1.0;
@@ -39,6 +76,22 @@ pub fn partial_ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
     best_ratio
  }
 
+/// Splits both strings into tokens, sorts them and calculates the similarity between sorted words.
+///
+/// # Example
+///
+/// ```
+/// let str1 = "My mom bought me ice cream";
+/// let str2 = "The ice cream was bought by my mom";
+/// let similiarity = fuzzy_match::token_sort_ratio(str1, str2, None);
+///
+/// assert_eq!(similiarity, 0.86206895);
+/// ```
+/// 
+/// # Third parameter
+/// 
+/// `clean_str: Option<bool>` - tells the function if the strings were cleaned. Set to `false` if they ware and to `true` or `None` if they need to be cleaned.
+/// 
 pub fn token_sort_ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
     if str1 == str2 {
         return 1.0;
@@ -61,6 +114,22 @@ pub fn token_sort_ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f3
     levenshtein(&str1_low_sorted, &str2_low_sorted, 0)
 }
 
+/// Finds the intersection of both strings and calculates the similarity of strings.
+///
+/// # Example
+///
+/// ```
+/// let str1 = "There are a lot of differences between Rust and C++";
+/// let str2 = "differences in Rust C++";
+/// let similiarity = fuzzy_match::token_set_ratio(str1, str2, None);
+///
+/// assert_eq!(similiarity, 0.9230769);
+/// ```
+/// 
+/// # Third parameter
+/// 
+/// `clean_str: Option<bool>` - tells the function if the strings were cleaned. Set to `false` if they ware and to `true` or `None` if they need to be cleaned.
+/// 
 pub fn token_set_ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
     if str1 == str2 {
         return 1.0;
@@ -104,6 +173,22 @@ pub fn token_set_ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32
     max_ratio
 }
 
+/// Levenshtein distance that calculates the similarity of two strings.
+///
+/// # Example
+///
+/// ```
+/// let str1 = "hello";
+/// let str2 = "hallo";
+/// let similiarity = fuzzy_match::levenshtein(str1, str2, 2);
+///
+/// assert_eq!(similiarity, 0.8);
+/// ```
+/// 
+/// # Third parameter
+/// 
+/// `substitution_const: usize` - sets the cost of changing one letter into another.
+/// 
 fn levenshtein(str1 : &str, str2 : &str, substitution_const: usize) -> f32 {
     let rows = str1.len() + 1;
     let columns = str2.len() + 1;
@@ -132,6 +217,16 @@ fn levenshtein(str1 : &str, str2 : &str, substitution_const: usize) -> f32 {
     (sum_length - distance[rows-1][columns-1] as f32) / sum_length
 }
 
+/// Cleans the string leaving only lower case letters, numbers and one space between words.
+///
+/// # Example
+///
+/// ```
+/// let str1 = "   It IS   imp^^^^0rtant";
+/// let cleaned_str = fuzzy_match::clean_string(str1);
+///
+/// assert_eq!(cleaned_str, "it is imp0rtant");
+/// ```
 fn clean_string(str : &str) -> String {
     let mut regex = Regex::new(r"[^a-zA-Z0-9\s]").unwrap();
     let cleared_str = regex.replace_all(&str, "").to_string().to_lowercase();
@@ -140,6 +235,17 @@ fn clean_string(str : &str) -> String {
     regex.replace_all(cleared_str.trim(), " ").to_string()
 }
 
+/// Uses the levenshtein distance to calculate the similarity of two strings.
+///
+/// # Example
+///
+/// ```
+/// let str1 = "Hello";
+/// let str2 = "Hallo";
+/// let similiarity = ratio!(str1, str2);
+///
+/// assert_eq!(similiarity, 0.8);
+/// ```
 #[macro_export]
 macro_rules! fuzzy_ratio {
     ($str1:expr, $str2:expr) => {
@@ -147,6 +253,17 @@ macro_rules! fuzzy_ratio {
     };
 }
 
+/// Splits the longest string into tokens and uses the levenshtein distance to calculate the similarity of tokens and shorter string.
+///
+/// # Example
+///
+/// ```
+/// let str1 = "Do we buy the airplane?";
+/// let str2 = "Airplane";
+/// let similiarity = partial_ratio!(str1, str2);
+///
+/// assert_eq!(similiarity, 1.0);
+/// ```
 #[macro_export]
 macro_rules! fuzzy_partial_ratio {
     ($str1:expr, $str2:expr) => {
@@ -154,6 +271,17 @@ macro_rules! fuzzy_partial_ratio {
     };
 }
 
+/// Splits both strings into tokens, sorts them and calculates the similarity between sorted words.
+///
+/// # Example
+///
+/// ```
+/// let str1 = "My mom bought me ice cream";
+/// let str2 = "The ice cream was bought by my mom";
+/// let similiarity = token_sort_ratio!(str1, str2);
+///
+/// assert_eq!(similiarity, 0.86206895);
+/// ```
 #[macro_export]
 macro_rules! fuzzy_token_sort_ratio {
     ($str1:expr, $str2:expr) => {
@@ -161,6 +289,17 @@ macro_rules! fuzzy_token_sort_ratio {
     };
 }
 
+/// Finds the intersection of both strings and calculates the similarity of strings.
+///
+/// # Example
+///
+/// ```
+/// let str1 = "There are a lot of differences between Rust and C++";
+/// let str2 = "differences in Rust C++";
+/// let similiarity = token_set_ratio!(str1, str2);
+///
+/// assert_eq!(similiarity, 0.9230769);
+/// ```
 #[macro_export]
 macro_rules! fuzzy_token_set_ratio {
     ($str1:expr, $str2:expr) => {
