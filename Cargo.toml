@@ -1,9 +1,11 @@
 [package]
 name = "fuzzy_match_flex"
 license = "MIT"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "Fuzzy matching library based on the popular `FuzzyWuzzy` library for python."
+repository = "https://github.com/Abbion/FuzzyMatchFlex"
+categories = ["Text processing"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
