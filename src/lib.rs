@@ -18,7 +18,7 @@ use regex::Regex;
 /// 
 /// # Third parameter
 /// 
-/// `clean_str: Option<bool>` - tells the function if the strings were cleaned. Set to `false` if they ware and to `true` or `None` if they need to be cleaned.
+/// `clean_str: Option<bool>` - tells the function if the strings were cleaned. Set to `Some(false)` if they ware and to `Some(true)` or `None` if they need to be cleaned.
 /// 
 pub fn ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
     if str1 == str2 {
@@ -47,7 +47,7 @@ pub fn ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
 /// 
 /// # Third parameter
 /// 
-/// `clean_str: Option<bool>` - tells the function if the strings were cleaned. Set to `false` if they ware and to `true` or `None` if they need to be cleaned.
+/// `clean_str: Option<bool>` - tells the function if the strings were cleaned. Set to `Some(false)` if they ware and to `Some(true)` or `None` if they need to be cleaned.
 /// 
 pub fn partial_ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
     if str1 == str2 {
@@ -88,7 +88,7 @@ pub fn partial_ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
 /// 
 /// # Third parameter
 /// 
-/// `clean_str: Option<bool>` - tells the function if the strings were cleaned. Set to `false` if they ware and to `true` or `None` if they need to be cleaned.
+/// `clean_str: Option<bool>` - tells the function if the strings were cleaned. Set to `Some(false)` if they ware and to `Some(true)` or `None` if they need to be cleaned.
 /// 
 pub fn token_sort_ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
     if str1 == str2 {
@@ -126,7 +126,7 @@ pub fn token_sort_ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f3
 /// 
 /// # Third parameter
 /// 
-/// `clean_str: Option<bool>` - tells the function if the strings were cleaned. Set to `false` if they ware and to `true` or `None` if they need to be cleaned.
+/// `clean_str: Option<bool>` - tells the function if the strings were cleaned. Set to `Some(false)` if they ware and to `Some(true)` or `None` if they need to be cleaned.
 /// 
 pub fn token_set_ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
     if str1 == str2 {
