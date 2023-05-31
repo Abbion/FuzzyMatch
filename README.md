@@ -8,8 +8,8 @@ The substitution constant is set to $2$.
 
 | Method | String_1 | String_2 | Result |
 |------- | ------- | --------- | ------ |
-| `ratio` | `This is a string` | `That is a string` | 0.875 |
-| `partial_ratio` | `Robert builds robots` | `roboty` | 0.833 |
+| `ratio` | `This is a string` | `That is a string` | $0.875$ |
+| `partial_ratio` | `Robert builds robots` | `roboty` | $0.833$ |
 
 # Usage
 
