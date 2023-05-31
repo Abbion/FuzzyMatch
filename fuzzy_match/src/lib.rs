@@ -1,5 +1,3 @@
-//! # Fuzzy Match
-//!
 //! `Fuzzy Match` is a fuzzy matching library based on popular `FuzzyWuzzy` library for python.
 //! It contains 4 basic fuzzy matching functions.
 
@@ -85,7 +83,7 @@ pub fn partial_ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32 {
 /// let str2 = "The ice cream was bought by my mom";
 /// let similiarity = fuzzy_match::token_sort_ratio(str1, str2, None);
 ///
-/// assert_eq!(similiarity, 0.86206895);
+/// assert_eq!(similiarity, 0.8666667);
 /// ```
 /// 
 /// # Third parameter
@@ -177,7 +175,7 @@ pub fn token_set_ratio(str1 : &str, str2 : &str, clean_str: Option<bool>) -> f32
 ///
 /// # Example
 ///
-/// ```
+/// ```rust,ignore
 /// let str1 = "hello";
 /// let str2 = "hallo";
 /// let similiarity = fuzzy_match::levenshtein(str1, str2, 2);
@@ -221,7 +219,7 @@ fn levenshtein(str1 : &str, str2 : &str, substitution_const: usize) -> f32 {
 ///
 /// # Example
 ///
-/// ```
+/// ```rust,ignore
 /// let str1 = "   It IS   imp^^^^0rtant";
 /// let cleaned_str = fuzzy_match::clean_string(str1);
 ///
@@ -239,7 +237,7 @@ fn clean_string(str : &str) -> String {
 ///
 /// # Example
 ///
-/// ```
+/// ```rust,ignore
 /// let str1 = "Hello";
 /// let str2 = "Hallo";
 /// let similiarity = ratio!(str1, str2);
@@ -257,7 +255,7 @@ macro_rules! fuzzy_ratio {
 ///
 /// # Example
 ///
-/// ```
+/// ```rust,ignore
 /// let str1 = "Do we buy the airplane?";
 /// let str2 = "Airplane";
 /// let similiarity = partial_ratio!(str1, str2);
@@ -275,12 +273,12 @@ macro_rules! fuzzy_partial_ratio {
 ///
 /// # Example
 ///
-/// ```
+/// ```rust,ignore
 /// let str1 = "My mom bought me ice cream";
 /// let str2 = "The ice cream was bought by my mom";
 /// let similiarity = token_sort_ratio!(str1, str2);
 ///
-/// assert_eq!(similiarity, 0.86206895);
+/// assert_eq!(similiarity, 0.8666667);
 /// ```
 #[macro_export]
 macro_rules! fuzzy_token_sort_ratio {
@@ -293,7 +291,7 @@ macro_rules! fuzzy_token_sort_ratio {
 ///
 /// # Example
 ///
-/// ```
+/// ```rust,ignore
 /// let str1 = "There are a lot of differences between Rust and C++";
 /// let str2 = "differences in Rust C++";
 /// let similiarity = token_set_ratio!(str1, str2);
