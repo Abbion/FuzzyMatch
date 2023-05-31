@@ -1,7 +1,9 @@
 [package]
 name = "fuzzy_match"
+license = "MIT"
 version = "0.1.0"
 edition = "2021"
+description = "Fuzzy matching library based on the popular `FuzzyWuzzy` library for python."
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

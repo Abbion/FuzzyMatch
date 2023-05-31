@@ -1,4 +1,4 @@
-//! `Fuzzy Match` is a fuzzy matching library based on popular `FuzzyWuzzy` library for python.
+//! `Fuzzy Match` is a fuzzy matching library based on the popular `FuzzyWuzzy` library for python.
 //! It contains 4 basic fuzzy matching functions.
 
 use std::{collections::HashSet};
