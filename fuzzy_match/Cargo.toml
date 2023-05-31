@@ -1,5 +1,5 @@
 [package]
-name = "fuzzy_match"
+name = "fuzzy_match_flex"
 license = "MIT"
 version = "0.1.0"
 edition = "2021"
