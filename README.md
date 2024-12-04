@@ -1,6 +1,6 @@
 # fuzzy_match_flex [![Crates.io](https://img.shields.io/crates/v/fuzzy_match_flex?logo=Rust)](https://crates.io/crates/fuzzy_match_flex) ![GitHub](https://img.shields.io/github/license/Abbion/FuzzyMatchFlex)
 
-**Fuzzy Match** is a fuzzy matching library based on the popular **FuzzyWuzzy** library for python. It contains 4 basic fuzzy matching function. There are also four macros that take responsibility for cleaning strings.
+**Fuzzy Match** is a library based on the popular **FuzzyWuzzy** library for python. It contains 4 basic fuzzy matching function. There are also four macros that take responsibility for cleaning strings.
 
 # Match Examples
 
